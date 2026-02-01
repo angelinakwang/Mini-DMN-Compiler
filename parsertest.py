@@ -1,12 +1,8 @@
-# In test_parser.py
-from src.parser import AndExpression, ExpressionParser, VariableExpression, OrExpression
+from src.parser import ExpressionParser
 
-# Test OR
-left = VariableExpression("danger_sign")
-right = VariableExpression("chest_indrawing")
-or_expr = OrExpression(left, right)
-and_expr = AndExpression(left, right)
+parser = ExpressionParser(['danger_sign', 'chest_indrawing', 'fast_breathing'])
 
-patient = {"danger_sign": False, "chest_indrawing": True}
-result = and_expr.evaluate(patient)
-print("and result:", result)  # Should print: True
+# Test parentheses
+expr = parser.parse("(danger_sign OR chest_indrawing) AND fast_breathing")
+patient = {"danger_sign": False, "chest_indrawing": True, "fast_breathing": True}
+print(expr.evaluate(patient))  # Should print: True
