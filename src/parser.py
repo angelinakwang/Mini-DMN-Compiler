@@ -1,6 +1,6 @@
 class ExpressionParser:
     def __init__(self, variables) -> None:
-        self.variables = variables
+        self.variables = set(variables)
 
     def parse(self, expression):
         """Convert string to tree, following operator precedence """
@@ -60,6 +60,9 @@ class ExpressionParser:
         if token == 'false':
             return LiteralExpression(False), pos + 1
     
+        if token not in self.variables:
+            raise ValueError(f"Unknown variable: '{token}' is not in the ruleset variables")
+
         return VariableExpression(token), pos + 1
     
 
