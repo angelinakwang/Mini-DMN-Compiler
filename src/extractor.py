@@ -25,11 +25,9 @@ class RuleExtractor:
             text = chunk['text']
             chunk_id = chunk['chunk_id']
             
-            # Check if default clause
             if 'otherwise' in text.lower():
                 default = self._extract_default(text, chunk_id)
             else:
-                # Extract rule
                 rule = self._extract_rule(text, chunk_id, i + 1)
                 if rule:
                     rules.append(rule)
@@ -39,7 +37,6 @@ class RuleExtractor:
     
         if not rules:
             raise ValueError("No rules found in manual text")
-    
         
         return {
             'name': 'extracted_ruleset',
@@ -58,20 +55,20 @@ class RuleExtractor:
         if not text.lower().startswith('if '):
             return None
         
-        # Extract outcome
         outcome_match = re.search(r'classify as (\w+)', text, re.IGNORECASE)
         if not outcome_match:
             raise ValueError(f"Cannot extract outcome from chunk {chunk_id}: '{text}'")
         outcome = outcome_match.group(1)
         
-        # Extract condition
         condition_match = re.search(r'if (.*?) is true,? classify', text, re.IGNORECASE)
+        if not condition_match:
+            condition_match = re.search(r'if (.*?),? classify', text, re.IGNORECASE)
+
         if not condition_match:
             raise ValueError(f"Cannot extract condition from chunk {chunk_id}: '{text}'")
         
         condition = condition_match.group(1).strip()
-        
-        # Extract variables from condition
+
         self._extract_variables(condition)
         
         return {
